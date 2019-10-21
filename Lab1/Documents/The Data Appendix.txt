@@ -1,0 +1,17 @@
+Data : results.csv
+
+The data contains the following variables:
+
+Header:
+Gender
+	Answers:
+	Male, Female
+Age	
+	Answers:
+	18-29, 30-44, 45-59, 60+
+Will the Big One occur in your lifetime?
+	Answers:
+	Yes, No
+Number of people who answered so
+	Answers:
+	Number of people who meet requirements of previous columns
