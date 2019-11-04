@@ -1,0 +1,86 @@
+# 1) Wyświetl listę imion i nazwisk menedżerów mieszkających w tym samym kraju i pracujących w tym sam sklep.
+select GROUP_CONCAT(first_name), GROUP_CONCAT(last_name), country, store.store_id from staff
+inner join address a on a.address_id = staff.address_id
+inner join city on city.city_id = a.city_id
+inner join country on country.country_id = city.country_id
+inner join store on store.manager_staff_id = staff.staff_id
+group by country, store.store_id;
+
+# 2) Znajdź listę wszystkich filmów o tej samej długości.
+select GROUP_CONCAT(title), length from film
+group by length
+order by length;
+
+# 3) Znajdź wszystkich klientów mieszkających w tym samym mieście.
+select GROUP_CONCAT(last_name) as Customer, city from customer
+inner join address on address.address_id = customer.address_id
+inner join city on address.city_id = city.city_id
+group by city
+order by city;
+
+# 4) Oblicz średni koszt wyporzycenia wszystkich filmów.
+select avg(rental_rate) from film;
+
+# 5) Oblicz i wyświetl liczbę filmów we wszystkich kategoriach.
+select count(title), name from film
+inner join film_category fc on film.film_id = fc.film_id
+inner join category c on fc.category_id = c.category_id
+group by name
+order by name;
+
+# 6) Wyświetl liczbę wszystkich klientów pogrupowanych według kraju.
+select count(customer_id), country from customer c
+inner join address a on c.address_id = a.address_id
+inner join city on city.city_id = a.city_id
+inner join  country on country.country_id = city.country_id
+group by country
+order by country;
+
+# 7) Wyświetl informacje o sklepie, który ma więcej niż 100 klientów i mniej niż 300 klientów.
+select s.store_id, s.manager_staff_id, s.address_id, s.last_update,
+count(customer_id) number
+from store s
+inner join customer c on c.store_id = s.store_id
+group by s.store_id
+having count(customer_id) between 100 and 300;
+
+# 8) Wybierz wszystkich klientów, którzy oglądali filmy ponad 200 godzin.
+select count(film.film_id) ile_filmow, sum(film.length)/60 ile_godzin, c.customer_id from film
+inner join inventory i on i.film_id = film.film_id
+inner join rental r on i.inventory_id = r.inventory_id
+inner join customer c on c.customer_id = r.customer_id
+group by c.customer_id
+order by customer_id;
+
+# 8 a) Ile godzin maja wypożyczony jakiś jeden film
+SELECT customer_id, sum (DATE_PART('day', return_date::timestamp - rental_date::timestamp) * 24 + 
+       DATE_PART('hour', return_date::timestamp - rental_date::timestamp)) ile_godzin 
+	   from rental
+	   group by customer_id
+	   having sum (DATE_PART('day', return_date::timestamp - rental_date::timestamp) * 24 + 
+       DATE_PART('hour', return_date::timestamp - rental_date::timestamp)) > 200
+	   order by customer_id;
+
+# 9) Oblicz średnią wartość wypożyczenia filmu. To samo co 4 ?
+select avg(amount) srednia from payment;
+
+# 10) Oblicz średnią wartość długości filmu we wszystkich kategoriach.
+select avg(length), c.name from film
+inner join film_category fc on film.film_id = fc.film_id
+inner join category c on c.category_id = fc.category_id
+group by name
+order by name;
+
+# 11) Znajdź najdłuższe tytuły filmowe we wszystkich kategoriach. NADAL NIE WIEM JAK !
+select c.name, max(length(film.title)) from film
+inner join film_category fc on film.film_id = fc.film_id
+inner join category c on c.category_id = fc.category_id
+group by name
+order by name;
+
+# 12) Znajdź najdłuższy film we wszystkich kategoriach. Porównaj wynik z pkt 10.
+select max(length), c.name from film
+inner join film_category fc on film.film_id = fc.film_id
+inner join category c on c.category_id = fc.category_id
+group by name
+order by name;
