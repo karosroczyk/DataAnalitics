@@ -1,0 +1,1 @@
+Trzeba pamiętac o odpowiednim ustawieniu ścieżek do plików
